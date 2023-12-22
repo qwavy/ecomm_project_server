@@ -1,6 +1,6 @@
 const {Basket} = require('../modals/modals')
 const ApiError = require('../error/ApiError')
-
+const {Product} = require("../modals/modals")
 class BasketController {
     // async add(req,res){
     //     // const {name} = req.body
@@ -10,13 +10,12 @@ class BasketController {
     // }
     async add(req, res) {
         try {
-            const { productId, quantity } = req.body;
+            const { productName, productPrice, productImg, quantity } = req.body;
             const userId = 1; // Предполагаем, что у вас есть userId, который вы хотите привязать к корзине
 
             // Проверяем, есть ли уже корзина для данного пользователя
             let basket = await Basket.findOne({
                 where: { userId },
-                include: Product // Включаем связанный продукт
             });
 
             if (!basket) {
@@ -24,20 +23,20 @@ class BasketController {
                 basket = await Basket.create({ userId });
             }
 
-            // Находим или создаем продукт, который вы хотите добавить в корзину
-            const product = await Product.findByPk(productId);
+            // Создаем новый продукт
+            const product = await basket.createProduct({
+                name: productName,
+                price: productPrice,
+                img: productImg,
+            });
 
-            if (!product) {
-                throw new ApiError(404, 'Продукт не найден');
-            }
-
-            // Добавляем продукт в корзину
+            // Добавляем продукт в корзину с указанным количеством
             await basket.addProduct(product, { through: { quantity } });
 
             // Возвращаем данные о корзине
             const updatedBasket = await Basket.findOne({
                 where: { userId },
-                include: Product
+                include: { all: true, nested: true },
             });
 
             return res.json(updatedBasket);
@@ -46,7 +45,6 @@ class BasketController {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
     }
-
     async getBasket(req, res) {
         try {
             const baskets = await Basket.findAll();
