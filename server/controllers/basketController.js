@@ -10,7 +10,7 @@ class BasketController {
     // }
     async add(req, res) {
         try {
-            const { productName, productPrice, productImg, quantity } = req.body;
+            const { productName, productPrice, productImg } = req.body;
             const userId = 1; // Предполагаем, что у вас есть userId, который вы хотите привязать к корзине
 
             // Проверяем, есть ли уже корзина для данного пользователя
@@ -24,19 +24,19 @@ class BasketController {
             }
 
             // Создаем новый продукт
-            const product = await basket.createProduct({
+            const product = await Product.create({
                 name: productName,
                 price: productPrice,
                 img: productImg,
             });
 
             // Добавляем продукт в корзину с указанным количеством
-            await basket.addProduct(product, { through: { quantity } });
+            await basket.addProduct(product);
 
             // Возвращаем данные о корзине
             const updatedBasket = await Basket.findOne({
                 where: { userId },
-                include: { all: true, nested: true },
+                include: Product, // Включаем связанный продукт
             });
 
             return res.json(updatedBasket);

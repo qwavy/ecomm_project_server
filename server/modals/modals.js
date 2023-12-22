@@ -71,6 +71,7 @@ const characteristicMotherboard = sequelize.define('characteristic_motherboard',
 
 User.hasOne(Basket)
 Basket.belongsTo(User)
+Basket.belongsToMany(Product, { through: 'BasketProduct' });
 
 Basket.hasOne(BasketProduct)
 BasketProduct.belongsTo(Basket)

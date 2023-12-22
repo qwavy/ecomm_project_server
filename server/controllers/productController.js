@@ -27,7 +27,10 @@ class ProductController {
         return res.json(products)
     }
     async getOne(req, res) {
-
+        const {name} = req.body
+        let products
+        products = await Product.findOne({where:{name:name}})
+        return res.json(products)
     }
 }
 module.exports = new ProductController()
