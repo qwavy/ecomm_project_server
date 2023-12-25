@@ -15,11 +15,11 @@ class UserController {
     async register(req, res, next) {
         const { email, password, role } = req.body
         if (!email || !password) {
-            return next(ApiError.badRequest('empty email or password'))
+            return next(ApiError.badRequest('Empty email or password'))
         }
         const candidate = await User.findOne({ where: { email } })
         if (candidate) {
-            return next(ApiError.badRequest('уже существует'))
+            return next(ApiError.badRequest('This email is already taken'))
         }
         const hashPassword = await bcrypt.hash(password, 5)
         const user = await User.create({ email, role, password: hashPassword })
