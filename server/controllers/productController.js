@@ -1,18 +1,22 @@
 const uuid = require('uuid')
 const path = require('path')
-const { Product } = require('../modals/modals')
+const { Product, characteristicLaptop } = require('../modals/modals')
 const ApiError = require('../error/ApiError')
 class ProductController {
     async create(req, res) {
         try {
-            const { name, price, typeId, info,img } = req.body
+            const { name, price, img, category,processer,processer_model,ram,ssd,display,display_hz,video_card } = req.body
+            let productCharacteristic
             // const { img } = req.files
             // let fileName = uuid.v4() + '.jpg'
             // img.mv(path.resolve(__dirname, '..', 'static', fileName))
 
-            const product = await Product.create({ name, price, img})
-
-            return res.json(product)
+            const product = await Product.create({ name, price, img,category,processer,processer_model,ram,ssd,display,display_hz,video_card})
+            if(category == "laptop"){
+                productCharacteristic = await characteristicLaptop.create({processer,processer_model,ram,ssd,display,display_hz,video_card})
+            }
+            console.log(characteristic)
+            return res.json(product,productCharacteristic)
         }
         catch (e) {
             console.log(e)

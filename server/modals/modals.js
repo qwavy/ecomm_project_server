@@ -21,6 +21,8 @@ const Product = sequelize.define('product', {
     name: { type: DataTypes.STRING, unique: true, allowNull: false },
     price: { type: DataTypes.INTEGER, allowNull: false },
     img: { type: DataTypes.STRING, allowNull: false },
+    category:{type: DataTypes.STRING},
+    characteristics:{type: DataTypes.STRING}
 })
 
 const Type = sequelize.define('type', {
